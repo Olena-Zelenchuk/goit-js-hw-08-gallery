@@ -7,11 +7,14 @@ const refs = {
   origImg: document.querySelector(".lightbox__image"),
   overlay: document.querySelector(".lightbox__overlay"),
 };
-console.log(refs.overlay);
 
 refs.ulRef.addEventListener("click", onOpenModal);
 refs.modalBtn.addEventListener("click", onCloseModal);
 refs.overlay.addEventListener("click", onCloseModal);
+
+const imgList = gallery.map(image => image.original)
+for (let i = 0; i < imgList.length; i+= 1) {imgList[i]}
+let currentIndex = null;
 
 function createItems(image) {
   const itemRef = document.createElement("li");
@@ -25,8 +28,8 @@ function createItems(image) {
 
   imgRef.src = image.preview;
   imgRef.alt = image.description;
-  imgRef.dataset.index = image.index;
   imgRef.dataset.suorce = image.original;
+  imgRef.dataset.index = image.index;
   imgRef.classList.add("gallery__image");
 
   linkRef.append(imgRef);
@@ -45,33 +48,44 @@ function onOpenModal(event) {
   window.addEventListener("keydown", onLiftImg);
 
   if (event.target.nodeName === "IMG") {
-    console.log(refs.origImg);
     refs.modalJs.classList.add("is-open");
     refs.origImg.src = event.target.dataset.suorce;
-    refs.origImg.id = event.target.id;
-  } else return;
+    refs.origImg.setAttribute("data-index", "");
+    } else return;
 }
 
 function onCloseModal() {
   refs.modalJs.classList.remove("is-open");
   refs.origImg.src = "";
   window.removeEventListener("keydown", onEsc);
-  //   window.removeEventListener("keydown", onLiftImg);
 }
+
 function onEsc(event) {
   if (event.code === "Escape") {
     onCloseModal();
   }
 }
+
 function onLiftImg(event) {
   if (event.code === "ArrowRight") {
-    let index;
-
-    console.dir(refs.origImg);
+    currentIndex += 1;
+    
+    if (currentIndex < imgList.length) {
+      refs.origImg.src = imgList[currentIndex]
+    } else if (currentIndex === imgList.length) {
+      currentIndex = 0;
+      refs.origImg.src = imgList[currentIndex]
+    }
+  
   } else if (event.code === "ArrowLeft") {
-    console.log("Left!!!");
-    event.target.id -= 1;
+    currentIndex -= 1;
+   
+    if (currentIndex >= 0) {
+      refs.origImg.src = imgList[currentIndex]
+    } else if (currentIndex < 0) {
+      currentIndex = imgList.length - 1;
+      refs.origImg.src = imgList[currentIndex]
+    }
   }
 }
 
-//
